@@ -1,0 +1,51 @@
+﻿@model BarterPlatform.Models.Comment
+
+@{
+    ViewData["Title"] = "留言修改";
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <form asp-action="FEComEdit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ComID" />
+            <div class="mb-3">
+                <label asp-for="ComContent" class="control-label"></label>
+                <input asp-for="ComContent" class="form-control" />
+                <span asp-validation-for="ComContent" class="text-danger"></span>
+            </div>
+            <div class="mb-3" style="display: none;">
+                <label asp-for="ComTime" class="control-label"></label>
+                <input asp-for="ComTime" class="form-control" />
+                <span asp-validation-for="ComTime" class="text-danger"></span>
+            </div>
+            <div class="mb-3" style="display: none;">
+                <label asp-for="Member_MemID" class="control-label"></label>
+                <select asp-for="Member_MemID" class="form-control" asp-items="ViewBag.Member_MemID"></select>
+                <span asp-validation-for="Member_MemID" class="text-danger"></span>
+            </div>
+            <div class="mb-3" style="display: none;">
+                <label asp-for="Item_IteID" class="control-label"></label>
+                <select asp-for="Item_IteID" class="form-control" asp-items="ViewBag.Item_IteID"></select>
+                <span asp-validation-for="Item_IteID" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-center justify-content-md-between">
+                    <div class="d-inline-block">
+                        <input type="submit" value="儲存" class="btn btn-primary" />
+                    </div>
+                    <div>
+                        <a asp-controller="Barter" asp-action="BarterChat" asp-route-id="@Model.Item_IteID" class="btn btn-secondary">回到小舖</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

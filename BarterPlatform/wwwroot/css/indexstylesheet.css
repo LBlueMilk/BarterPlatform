@@ -1,0 +1,24 @@
+﻿#nametitle {
+    grid-column: span 3;
+    color: #743A3A;
+    font-weight: bold;
+    font-style: italic;
+    text-decoration: underline;
+}
+
+.card-text-out {
+    font-weight: bold;
+}
+
+.card-text-in {
+    color: #484891;
+    font-weight: bold;
+}
+
+#personalpagetitle {
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}

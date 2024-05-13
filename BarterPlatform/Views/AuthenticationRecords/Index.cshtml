@@ -1,0 +1,53 @@
+﻿@model IEnumerable<BarterPlatform.Models.AuthenticationRecords>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.AuthStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AuthTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Employee_Emp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Member_Mem)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.AuthStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AuthTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Employee_Emp.EmpID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Member_Mem.MemID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.AuthID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.AuthID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.AuthID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

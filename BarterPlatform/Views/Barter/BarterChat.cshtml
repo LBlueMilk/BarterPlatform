@@ -1,0 +1,215 @@
+﻿@model BarterPlatform.Models.BarterIteComModel
+
+@{
+    ViewData["Title"] = "易物小舖";
+
+    //依照Cookies["LoggedInMem"]的MemID去判斷登入者身分
+    bool loggedInAndMatchingMemId = Context.Request.Cookies["LoggedInMem"] != null && Context.Request.Cookies["LoggedInMem"] == Model.Item.Member_MemID;    
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<div class="card mb-3">
+    <div class="row g-0">
+        <div class="col-md-3 d-flex justify-content-center align-items-center">
+            @if (Model.Item.IteImage != null && Model.Item.IteImage.Length > 0)
+            {
+                <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Item.IteImage)" alt="ID Image" class="img-fluid rounded-start" />
+            }
+            else
+            {
+                <img src="@Url.Content("~/Images/Noimageavailable.jpg")" alt="No image available" class="img-fluid rounded-start" />
+            }
+        </div>
+        <div class="col-md-9">
+            <div class="card-body d-flex flex-column h-100">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="card-title">
+                                易物品名：@Html.DisplayFor(model => model.Item.ItemName)
+                                @* 發文者本身才看得到 *@
+                                @if (loggedInAndMatchingMemId)
+                                {
+                                    <a asp-action="Edit" asp-route-id="@Model?.Item.IteID" class="btn btn-outline-success btn-sm mx-1">編輯小舖</a>
+                                    <form asp-controller="Barter" asp-action="Delete" method="post" onsubmit="return confirmTwoTimes('@Model.Item.ItemName')" class="d-inline">
+                                        <input type="hidden" name="id" id="id" value="@Model.Item.IteID" />
+                                        <input type="submit" value="刪除小舖" class="btn btn-outline-danger btn-sm mx-1" />
+                                    </form>
+                                }
+                            </h5>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p class="card-text"><small class="text-muted">@Html.DisplayFor(model => model.Item.Bargain)：能否議價</small></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 overflow-auto">
+                    <p class="card-text">@Html.DisplayFor(model => model.Item.IteDesc)</p>
+                </div>
+
+                <div class="mt-auto">
+                    <div class="row mt-2">
+                        <div class="col-md-9">
+                            <div class="card-text">
+                                <small class="text-muted">
+                                發文時間: @Html.DisplayFor(model => model.Item.UploadTime)
+                                聯絡電話: @Html.DisplayFor(model => model.Item.Member_Mem.Phone)
+                                聯絡信箱: @Html.DisplayFor(model => model.Item.Member_Mem.Email)
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            @* 有登入帳號才看得到 *@
+                            @if (Context.Request.Cookies["LoggedInMem"] != null)
+                            {
+                                <button id="replyButton" class="btn btn-outline-primary btn-sm mx-1">我要留言</button>
+                            }
+
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-sm mx-1">返回廣場</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <h2>有話要說</h2>
+    <hr />
+    <div id="CommentContent">
+        @foreach (var comment in Model.Comments.Reverse())  //反向循環
+        {
+            bool loggedInAndMatchingMemIdByComment = Context.Request.Cookies["LoggedInMem"] == comment.Member_MemID;
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p class="card-text">@comment.ComContent</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="card-text"><small class="text-muted">留言人：@comment.Member_Mem.PersonalName</small></p>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            @if (loggedInAndMatchingMemIdByComment)
+                            {
+                                <a asp-controller="Barter" asp-action="FEComEdit" asp-route-id="@comment.ComID" class="btn btn-outline-success btn-sm me-1">編輯留言</a>
+
+                                <form asp-controller="Barter" asp-action="FEComDelete" method="post" onsubmit="return confirmTwoTimes('@comment.ComContent')" class="d-inline">
+                                    <input type="hidden" name="id" id="id" value="@comment.ComID" />
+                                    <input type="submit" value="刪除留言" class="btn btn-outline-danger btn-sm me-1" />
+                                </form>
+                            }
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <p class="card-text"><small class="text-muted">留言時間：@comment.ComTime</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replyModalLabel">留言內容</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @* 改成直接顯示Comments的Create頁面 *@
+                @* <form id="replyForm">
+                <div class="mb-3">
+                <textarea class="form-control" id="replyContent" rows="7" maxlength="300"
+                placeholder="留言內容請勿超過300字，並且&#10;(1) 尊重他人意見&#10;(2) 注意用字遣詞與口氣，避免引起爭吵&#10;(3) 適度引用文章，避免引用過長文章，造成閱讀困擾"></textarea>
+                </div>
+                </form> *@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submitReply">送出留言</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section Scripts {
+    <script>
+
+        //二次確認刪除
+        function confirmTwoTimes(ItemName) {
+            // 第一次確認
+            var firstConfirmation = confirm("你確定要刪除 " + ItemName + "帖子嗎?");
+
+            // 如果確認，則第二次確認
+            if (firstConfirmation) {
+                var secondConfirmation = confirm("你真的確定要刪除 " + ItemName + "帖子嗎?");
+                return secondConfirmation; // 如果第二次確認，返回結果
+            } else {
+                return false; // 如果第一次確認取消，則不提交表單
+            }
+        }
+
+
+        //jQuery顯示指定畫面
+        $('#replyModal .modal-body').load("/Comments/Create/@(Model.Item.IteID)");
+
+        //在指定畫面裡取得id叫replyModal的畫面
+        var replyModal = new bootstrap.Modal(document.getElementById('replyModal'));
+
+        //取得當前頁面IteID
+        var itemPageId = @Model.Item.IteID;
+
+        $(document).ready(function () {
+            $('#replyButton').click(function () {
+                //加載完成顯示
+                $('#replyModal .modal-body').load("/Comments/Create/@(Model.Item.IteID)", function () {
+                    $('#replyModal').modal('show');
+                });
+            });
+
+            console.log(itemPageId);
+
+            $('#submitReply').click(function () {
+
+                console.log("點擊有效");
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Comments/Create",
+                    data: {
+                        ComContent: $('#ComContent').val(), //取的id是ComContent的值
+                        itemPageId: itemPageId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() //防偽標記
+                    },
+                    success: function (data) {
+
+                        console.log("留言成功：" + data);
+                        //清空表單
+                        $('#replyContent').val('');
+                        //關閉框
+                        $('#replyModal').modal('hide');
+
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+
+                        console.error("留言失敗：" + error);
+                        alert('留言失敗');
+                    }
+                });
+            });
+
+        });
+
+
+
+    </script>
+}

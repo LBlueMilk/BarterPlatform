@@ -1,0 +1,398 @@
+﻿@model BarterPlatform.Models.PersonalPageViewModel
+
+@{
+    //新增暱稱or名稱顯示
+    string selectedNickname = Model.Member.Nickname;
+    string selectedPersonalName = Model.Member.PersonalName;
+    string title = "";
+
+    if (!string.IsNullOrEmpty(selectedNickname))
+    {
+        title += selectedNickname + "的小屋";
+    }
+    else if (!string.IsNullOrEmpty(selectedPersonalName))
+    {
+        title += selectedPersonalName + "的小屋";
+    }
+
+    ViewData["Title"] = title;
+}
+
+
+<div class="container">
+    <h1 class="shadow mt-2 mb-3 p-2 text-center" id="personalpagetitle">@title</h1>
+    <div class="row">
+        <div class="col-3">
+            <h3 class="text-center text-primary">功能選單</h3>
+            <div class="list-group hoverCursor" id="menuList" role="tablist">
+                <button class="list-group-item list-group-item-action active" data-bs-toggle="list" role="tab" onclick="showPersonalInfo()"><i class="bi bi-person"></i> 個人資料</button>
+                <button class="list-group-item list-group-item-action" data-bs-toggle="list" role="tab" onclick="showPostRecord()"><i class="bi bi-journal-text"></i> 小舖紀錄</button>
+                <button class="list-group-item list-group-item-action" data-bs-toggle="list" role="tab" onclick="showCommentRecord()"><i class="bi bi-chat-dots"></i> 留言紀錄</button>
+            </div>
+        </div>
+        <div class="col-9" id="postPersonalInfo">
+            <h3 class="text-center text-primary" id="buttonShow">個人資料</h3>
+            <div class="card mb-3">
+                <div class="row g-0" id="postRecordContentArea">
+                    <div class="row">
+                        <div class="col-md-4 d-flex justify-content-center align-items-center">
+                            @if (Model.Member.IDImage != null && Model.Member.IDImage.Length > 0)
+                            {
+                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Member.IDImage)" alt="ID Image" class="img-fluid rounded-start" />
+                            }
+                            else
+                            {
+                                <img src="@Url.Content("~/Images/Noimageavailable.jpg")" alt="No image available" class="img-fluid rounded-start" />
+                            }
+                        </div>
+
+                        <div class="col-md-7">
+                            <div class="card-body" style="display: grid; grid-template-columns: repeat(3, 1fr);">
+                                <h5 class="card-title" id="nametitle">@Html.DisplayFor(Model => Model.Member.PersonalName)</h5>
+                                <p class="card-text"><span class="card-text-out">暱稱：</span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Nickname)</span></p>
+                                <p class="card-text"><span class="card-text-out">性別： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Gender)</span></p>
+                                <p class="card-text"><span class="card-text-out">生日： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.FormattedBirthDate)</span></p>  @* 修改取時間的規格，寫在Member FormattedBirthDate *@
+                                <p class="card-text"><span class="card-text-out">郵遞區號： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.PostalCode)</span></p>
+                                <p class="card-text"><span class="card-text-out">行政區： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.AdminRegion_Adm.AdminRegion)</span></p>
+                                <p class="card-text"><span class="card-text-out">鄉鎮市區： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.District_Dis.DistrictName)</span></p>
+                                <p class="card-text"><span class="card-text-out">其他地址： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.OtherAddress)</span></p>
+                                <p class="card-text"><span class="card-text-out">帳號： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Username)</span></p>
+                                <p class="card-text"><span class="card-text-out">密碼： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Password)</span></p>
+                                <p class="card-text"><span class="card-text-out">電子信箱： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Email)</span></p>
+                                <p class="card-text"><span class="card-text-out">電話： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Phone)</span></p>
+                                <p class="card-text"><span class="card-text-out">身分證字號： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.NationalID)</span></p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-1 d-flex justify-content-center align-items-center">
+                            <div class="d-flex flex-column align-items-center">
+                                <a asp-action="Edit" asp-route-id="@Model.Member.MemID" class="btn btn-outline-success btn-sm mb-2">編輯</a>
+                                <br>
+                                <form asp-controller="Members" asp-action="DeleteFE" method="post" onsubmit="return confirmFourTimes()">
+                                    <input type="hidden" name="id" id="id" value="@Model.Member.MemID" />
+                                    <input type="submit" value="刪除帳號" class="btn btn-outline-danger btn-sm" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-0" id="postPostRecord"></div>
+                <div class="row g-0" id="postCommentRecord"></div>
+            </div>
+        </div>
+
+        @* <p>用戶資料的 MemID：@Model.Member.MemID</p>
+        <p>評論資料的數量：@Model.Comments.Count</p>
+        <p>物品資料的數量：@Model.Items.Count</p> *@
+
+        @* 個人資料 *@
+        <div class="row" id="showPInfo" style="display:none;">
+            <div class="col-md-4 d-flex justify-content-center align-items-center">
+                @if (Model.Member.IDImage != null && Model.Member.IDImage.Length > 0)
+                {
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Member.IDImage)" alt="ID Image" class="img-fluid rounded-start" />
+                }
+                else
+                {
+                    <img src="@Url.Content("~/Images/Noimageavailable.jpg")" alt="No image available" class="img-fluid rounded-start" />
+                }
+            </div>
+
+            <div class="col-md-7">
+                <div class="card-body" style="display: grid; grid-template-columns: repeat(3, 1fr);">
+                    <h5 class="card-title" id="nametitle">@Html.DisplayFor(Model => Model.Member.PersonalName)</h5>
+                    <p class="card-text"><span class="card-text-out">暱稱：</span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Nickname)</span></p>
+                    <p class="card-text"><span class="card-text-out">性別： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Gender)</span></p>
+                    <p class="card-text"><span class="card-text-out">生日： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.FormattedBirthDate)</span></p>  @* 修改取時間的規格，寫在Member FormattedBirthDate *@
+                    <p class="card-text"><span class="card-text-out">郵遞區號： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.PostalCode)</span></p>
+                    <p class="card-text"><span class="card-text-out">行政區： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.AdminRegion_Adm.AdminRegion)</span></p>
+                    <p class="card-text"><span class="card-text-out">鄉鎮市區： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.District_Dis.DistrictName)</span></p>
+                    <p class="card-text"><span class="card-text-out">其他地址： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.OtherAddress)</span></p>
+                    <p class="card-text"><span class="card-text-out">帳號： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Username)</span></p>
+                    <p class="card-text"><span class="card-text-out">密碼： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Password)</span></p>
+                    <p class="card-text"><span class="card-text-out">電子信箱： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Email)</span></p>
+                    <p class="card-text"><span class="card-text-out">電話： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.Phone)</span></p>
+                    <p class="card-text"><span class="card-text-out">身分證字號： </span><span class="card-text-in">@Html.DisplayFor(Model => Model.Member.NationalID)</span></p>
+                </div>
+            </div>
+
+            <div class="col-md-1 d-flex justify-content-center align-items-center">
+                <div class="d-flex flex-column align-items-center">
+                    <a asp-action="Edit" asp-route-id="@Model.Member.MemID" class="btn btn-outline-success btn-sm mb-2">編輯</a>
+                    <br>
+                    <form asp-controller="Members" asp-action="DeleteFE" method="post" onsubmit="return confirmFourTimes()">
+                        <input type="hidden" name="id" id="id" value="@Model.Member.MemID" />
+                        <input type="submit" value="刪除帳號" class="btn btn-outline-danger btn-sm" />
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        @* 小舖紀錄 *@
+        <table class="table text-center align-middle table-hover" id="showPR" style="display:none;">
+            @if (Model.Items != null && Model.Items.Any())
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Items.FirstOrDefault().ItemName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Items.FirstOrDefault().IteImage)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Items.FirstOrDefault().IteDesc)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Items.FirstOrDefault().UploadTime)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Items.FirstOrDefault().Bargain)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr class="item-row" data-item-id="@item.IteID">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ItemName)
+                            </td>
+                            <td style="width:100px;height:100px;overflow:hidden;">
+                                @if (item.IteImage != null && item.IteImage.Length > 0)
+                                {
+                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.IteImage)" alt="ID Image" class="img-fluid rounded-start" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content("~/Images/Noimageavailable.jpg")" alt="No image available" class="img-fluid rounded-start" />
+                                }
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.IteDesc)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.UploadTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Bargain)
+                            </td>
+                            <td>
+                                <div class="d-flex flex-row justify-content-center align-items-center">
+                                    <a asp-controller="Barter" asp-action="BarterChat" asp-route-id="@item.IteID" class="btn btn-outline-primary btn-sm me-1">前往<br>小舖</a>
+                                    <a asp-controller="Barter" asp-action="Edit" asp-route-id="@item.IteID" class="btn btn-outline-success btn-sm me-1">編輯<br>小舖</a>
+                                    <form asp-controller="Barter" asp-action="Delete" method="post" onsubmit="return confirmTwoTimes('@item.ItemName')">
+                                        <input type="hidden" name="id" id="id" value="@item.IteID" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">刪除<br>小舖</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            }
+            else
+            {
+                <tbody>
+                    <tr>
+                        <td colspan="6">
+                            <h1 class="text-center text-danger">尚未創建小舖</h1>
+                        </td>
+                    </tr>
+                </tbody>
+            }
+        </table>
+
+        @* 留言紀錄 *@
+        <table class="table text-center align-middle table-hover" id="showCR" style="display:none;" >
+            @if (Model.Comments != null && Model.Comments.Any())
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Comments.FirstOrDefault().ComContent)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Comments.FirstOrDefault().Item_ID.ItemName)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Comments)
+                    {
+                        <tr class="item-row" data-item-id="@item.ComID">
+                            <td style="word-wrap: break-word; max-width: 400px;">
+                                @Html.DisplayFor(modelItem => item.ComContent)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Item_ID.ItemName)
+                            </td>
+                            <td>
+                                <div class="d-flex flex-row justify-content-center align-items-center">
+                                    <a asp-controller="Barter" asp-action="BarterChat" asp-route-id="@item.Item_IteID" class="btn btn-outline-primary btn-sm me-1">前往<br>小舖</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            }
+            else
+            {
+                <tbody>
+                    <tr>
+                        <td colspan="6">
+                            <h1 class="text-center text-danger">尚未在任何小舖留言</h1>
+                        </td>
+                    </tr>
+                </tbody>
+            }
+        </table>
+
+    </div>
+</div>
+
+
+@section scripts {
+    <script>
+
+        function showPersonalInfo() {
+            // 修改標題為「個人資料」
+            $("#buttonShow").text("個人資料");
+
+            var tHTML = document.getElementById("showPInfo").outerHTML; // 獲取表格的HTML內容
+            $("#postRecordContentArea").html(""); // 清空目標位置的內容
+            $("#postRecordContentArea").html(tHTML); // 將HTML內容插入到目標位置
+
+            $("#showPInfo").show(function () {
+                $("#showPR").hide(); // 隱藏ID為"showPR"的區域
+                $("#showCR").hide();
+            }); // 顯示ID為 "showPInfo" 的區域
+
+        }
+
+        function showPostRecord() {
+            // 修改標題為「小舖紀錄」
+            $("#buttonShow").text("小舖紀錄");
+
+            var pHTML = document.getElementById("showPR").outerHTML; // 獲取表格的HTML內容
+            $("#postRecordContentArea").html(""); // 清空目標位置的內容
+            $("#postRecordContentArea").html(pHTML); // 將HTML內容插入到目標位置
+
+            $("#showPR").show(function () {
+                $("#showPInfo").hide(); // 隱藏ID為"showPInfo"的區域
+                $("#showCR").hide();
+            }); // 顯示ID為 "showPR" 的區域
+        }
+
+        function showCommentRecord() {
+            // 修改標題為「留言紀錄」
+            $("#buttonShow").text("留言紀錄");
+
+            var cHTML = document.getElementById("showCR").outerHTML; // 獲取表格的HTML內容
+            $("#postRecordContentArea").html(""); // 清空目標位置的內容
+            $("#postRecordContentArea").html(cHTML); // 將HTML內容插入到目標位置
+
+            $("#showCR").show(function () {
+                $("#showPInfo").hide(); // 隱藏ID為"showPInfo"的區域
+                $("#showPR").hide();
+            }); // 顯示ID為 "showCR" 的區域            
+        }
+
+
+        // 四次確認刪除
+        function confirmFourTimes() {
+            // 定義四次確認的提示訊息
+            var confirmMessages = [
+                "你確定要刪除帳號嗎?( ˘･з･)",
+                "你真的確定要刪除帳號嗎??(TдT)",
+                "你真的確定嗎？刪除後帳號就回不來囉！(╥﹏╥)",
+                "(ಥ﹏ಥ)(ಥ﹏ಥ)(ಥ﹏ಥ)"
+            ];
+
+            // 使用遞迴函式進行多次確認
+            function confirmRecursive(index) {
+                // 顯示確認訊息，取得使用者的回覆
+                var userConfirmation = confirm(confirmMessages[index]);
+
+                // 如果使用者確認
+                if (userConfirmation) {
+                    // 如果已經是最後一次確認，返回結果
+                    if (index === confirmMessages.length - 1) {
+                        return true;
+                    } else {
+                        // 否則，繼續進行下一次確認
+                        return confirmRecursive(index + 1);
+                    }
+                } else {
+                    // 如果使用者取消，返回 false
+                    return false;
+                }
+            }
+
+            // 呼叫遞迴函式，從第一次確認開始
+            return confirmRecursive(0);
+        }
+
+
+        //二次確認刪除
+        function confirmTwoTimes(ItemName) {
+            // 第一次確認
+            var firstConfirmation = confirm("你確定要刪除 " + ItemName + " 帖子嗎?");
+
+            // 如果確認，則第二次確認
+            if (firstConfirmation) {
+                var secondConfirmation = confirm("你真的確定要刪除 " + ItemName + " 帖子嗎?");
+                return secondConfirmation; // 如果第二次確認，返回結果
+            } else {
+                return false; // 如果第一次確認取消，則不提交表單
+            }
+        }
+
+        //二次確認刪除
+        function comConfirmTwoTimes(ItemName, ComContent) {
+            // 第一次確認
+            var firstConfirmation = confirm("你確定要刪除在 " + ItemName + " 的 " + ComContent + " 留言嗎?");
+
+            // 如果確認，則第二次確認
+            if (firstConfirmation) {
+                var secondConfirmation = confirm("你真的確定要刪除在 " + ItemName + " 的 " + ComContent + " 留言嗎?");
+                return secondConfirmation; // 如果第二次確認，返回結果
+            } else {
+                return false; // 如果第一次確認取消，則不提交表單
+            }
+        }
+
+
+        // // 四次確認刪除
+        // function confirmFourTimes() {
+        //     // 第一次確認
+        //     var firstConfirmation = confirm("你確定要刪除帳號嗎?( ˘･з･)");
+
+        //     // 如果確認，進行第二次確認
+        //     if (firstConfirmation) {
+        //         var secondConfirmation = confirm("你真的確定要刪除帳號嗎??(TдT)");
+
+        //         // 如果第二次確認，進行第三次確認
+        //         if (secondConfirmation) {
+        //             var thirdConfirmation = confirm("你真的確定嗎？刪除後帳號就回不來囉！(╥﹏╥)");
+
+        //             // 如果第三次確認，進行第四次確認
+        //             if (thirdConfirmation) {
+        //                 var fourthConfirmation = confirm("(ಥ﹏ಥ)(ಥ﹏ಥ)(ಥ﹏ಥ)");
+
+        //                 // 如果第四次確認，返回結果
+        //                 return fourthConfirmation;
+        //             } else {
+        //                 return false; // 如果第三次確認取消，不提交表單
+        //             }
+        //         } else {
+        //             return false; // 如果第二次確認取消，不提交表單
+        //         }
+        //     } else {
+        //         return false; // 如果第一次確認取消，不提交表單
+        //     }
+        // }
+
+    </script>
+}

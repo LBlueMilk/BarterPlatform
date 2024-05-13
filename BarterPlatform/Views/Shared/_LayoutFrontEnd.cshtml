@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>易物平台 - @ViewData["Title"] - 學習網 </title>
+
+    @* bootstrap *@
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    @* bootstrap-icons *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    @* jquery *@
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BarterPlatform.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/indexstylesheet.css" asp-append-version="true">
+
+
+    
+    <style>
+        @* 放大鏡 *@
+        .position-relative {
+            position: relative;
+        }
+        @* 放大鏡 *@
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+        }
+
+        body {
+            background-color: rgba(0, 33, 102, 0.1);
+        }
+
+
+        footer {
+            position: fixed; 
+            bottom: 0;
+            width: 100%;
+            background-color: #f8f9fa; 
+            text-align: center; 
+            z-index: 1000; 
+        }
+
+    </style>
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm  navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">易物平台</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="WebmastersWords">站長的話</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Barter" asp-action="Index">易物廣場</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="~/APOPAPI.html">農產品產地價格API</a>
+                        </li>
+                        @* <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">開頭動畫</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Employees" asp-action="Index">後台路徑</a>
+                        </li>     *@                                           
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item my-auto mx-3">
+                            <form class="d-flex" action="/Barter/SearchFE" method="get">
+                              <input class="form-control" type="search" name="searchText" placeholder="搜尋小舖" aria-label="搜尋">
+                              <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
+                            </form>
+                        </li>
+                        @* 判斷登入狀態 *@
+                                @if (Context.Request.Cookies["LoggedInMem"] != null)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="PersonalPage" asp-action="Index">我的小屋</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li></li>
+                                } 
+                        <li>
+                            <div class="mx-2">
+                                @* 判斷登入狀態 *@
+                                @if (Context.Request.Cookies["LoggedInMem"] != null)
+                                {
+                                    <a class="btn btn-outline-light m-sm-auto" asp-area="" asp-controller="Login" asp-action="Logout">登出</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-outline-light m-sm-auto" asp-area="" asp-controller="Login" asp-action="Login">登入/註冊</a>
+                                }
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container text-center">
+            &copy; @DateTime.Now.ToString("yyyy") - 易物平台 - (✪ω✪)歡迎您(✪ω✪) - <a asp-area="" asp-controller="Home" asp-action="Privacy">隱私權政策</a> |
+            本站所刊載之圖文內容等版權皆屬原廠商或原作者所有，非經同意請勿轉載
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+
+        //Tooltips啟動
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
