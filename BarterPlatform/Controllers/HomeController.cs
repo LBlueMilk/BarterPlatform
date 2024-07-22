@@ -2,16 +2,22 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Net.Mail;
+using System.Net;
 
 namespace BarterPlatform.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        //注入信箱資料
+        private readonly BPEmail.SmtpSettings _smtpSettings;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,IConfiguration configuration)
         {
             _logger = logger;
+            //取得資料後注入
+            _smtpSettings = configuration.GetSection("SmtpSettings").Get<BPEmail.SmtpSettings>();
         }
 
         public IActionResult Index()
@@ -42,7 +48,46 @@ namespace BarterPlatform.Controllers
             return View();
         }
 
-        
+        //訪客信箱留言
+        [HttpPost]
+        public async Task<IActionResult> SendComment(string name, string email, string message)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var mailMessage = new MailMessage
+                    {
+                        From = new MailAddress(_smtpSettings.SenderEmail, _smtpSettings.SenderName),
+                        Subject = "新留言",
+                        Body = $"姓名: {name}\n電子郵件: {email}\n留言:\n{message}",
+                        IsBodyHtml = false,
+                    };
+                    mailMessage.To.Add("barterplatform19111010@gmail.com");
+
+                    using (var smtpClient = new SmtpClient(_smtpSettings.Host)
+                    {
+                        Port = _smtpSettings.Port,
+                        Credentials = new NetworkCredential(_smtpSettings.Username, _smtpSettings.Password),
+                        EnableSsl = _smtpSettings.EnableSsl,
+                    })
+                    {
+                        await smtpClient.SendMailAsync(mailMessage);
+                    }
+
+                    TempData["Success"] = "留言已成功發送！";
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.ToString(), "Error sending email.");
+                    TempData["Error"] = "發送留言時出現錯誤。請稍後再試。";
+                }
+            }
+
+            return RedirectToAction("WebmastersWords");
+        }
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
