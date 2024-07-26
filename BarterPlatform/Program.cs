@@ -5,9 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
 //註冊連線，名稱來自appsettings.json設定
 builder.Services.AddDbContext<BarterPlatformContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("BarterPlatformConnection")));
 
@@ -28,6 +25,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSwaggerGen();
+
+//註冊SmtpSettings配置，將secrets.json寫在Azure
+builder.Services.Configure<BPEmail.SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+
 
 /////////////////////////////////////////////////////////////////////
 

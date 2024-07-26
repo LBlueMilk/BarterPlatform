@@ -50,7 +50,7 @@ namespace BarterPlatform.Controllers
 
         //訪客信箱留言
         [HttpPost]
-        public async Task<IActionResult> SendComment(string name, string email, string message)
+        public async Task<IActionResult> SendComment(EMailCommentModel model)
         {
             if (ModelState.IsValid)
             {
@@ -60,7 +60,7 @@ namespace BarterPlatform.Controllers
                     {
                         From = new MailAddress(_smtpSettings.SenderEmail, _smtpSettings.SenderName),
                         Subject = "新留言",
-                        Body = $"姓名: {name}\n電子郵件: {email}\n留言:\n{message}",
+                        Body = $"姓名: {model.Name}\n電子郵件: {model.Email}\n留言:\n{model.Message}",
                         IsBodyHtml = false,
                     };
                     mailMessage.To.Add("barterplatform19111010@gmail.com");

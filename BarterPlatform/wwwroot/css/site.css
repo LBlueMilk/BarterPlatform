@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -16,3 +16,29 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+/* 自訂錯誤消息樣式 */
+.field-validation-error {
+    color: #dc3545; /* 錯誤消息顏色 */
+    font-size: 0.875em; /* 錯誤消息字體大小 */
+    margin-top: 5px; /* 錯誤消息與輸入框之間的距離 */
+    display: block; /* 顯示為區塊 */
+    border: 1px solid #dc3545; /* 錯誤邊框顏色 */
+    padding: 5px; /* 錯誤消息內邊距 */
+    border-radius: 5px; /* 錯誤消息邊框圓角 */
+    background-color: #f8d7da; /* 錯誤消息背景顏色 */
+}
+/* 自訂輸入框錯誤樣式 */
+input.error, textarea.error {
+    border-color: #dc3545; /* 錯誤邊框顏色 */
+    background-color: #f8d7da; /* 錯誤背景顏色 */
+}
+/* 自訂錯誤消息顯示方式 */
+.field-validation-error::before {
+    content: "⚠️"; /* 顯示警告符號 */
+    color: #dc3545; /* 圖示顏色 */
+    margin-right: 5px; /* 圖示與消息之間的距離 */
+    font-size: 1.2em; /* 圖示字體大小 */
+}
+

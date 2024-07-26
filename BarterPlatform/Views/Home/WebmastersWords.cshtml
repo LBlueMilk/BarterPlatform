@@ -1,4 +1,6 @@
-﻿@{
+﻿@model BarterPlatform.Models.EMailCommentModel
+
+@{
     ViewData["Title"] = "站長的話";
 }
 
@@ -105,16 +107,23 @@
 <div class="comment-form-container">
     <div class="comment-form-inner">
         <form asp-action="SendComment" method="post">
-            <label for="name">姓名:</label>
-            <input type="text" id="name" name="name" required>
-
-            <label for="email">電子郵件:</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="message">留言:</label>
-            <textarea id="message" name="message" rows="5" required></textarea>
-
+            <div>
+                <label asp-for="Name">姓名：</label>
+                <input asp-for="Name" />
+                <span asp-validation-for="Name"></span>
+            </div>
+            <div>
+                <label asp-for="Email">電子郵件：</label>
+                <input asp-for="Email" />
+                <span asp-validation-for="Email"></span>
+            </div>
+            <div>
+                <label asp-for="Message">留言：</label>
+                <textarea asp-for="Message"></textarea>
+                <span asp-validation-for="Message"></span>
+            </div>
             <button type="submit">提交留言</button>
         </form>
     </div>
 </div>
+
