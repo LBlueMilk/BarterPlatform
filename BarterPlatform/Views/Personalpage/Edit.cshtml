@@ -1,0 +1,210 @@
+﻿@model BarterPlatform.Models.Member
+
+@{
+    //新增暱稱or名稱顯示
+    string selectedNickname = ViewData["Nickname"] as string;
+    string selectedPersonalName = ViewData["PersonalName"] as string;
+    string title = "修改";
+
+    if (!string.IsNullOrEmpty(selectedNickname))
+    {
+        title += "[" + selectedNickname + "] 資料";
+    }
+    else if (!string.IsNullOrEmpty(selectedPersonalName))
+    {
+        title += "[" + selectedPersonalName + "] 資料";
+    }
+
+    ViewData["Title"] = title;
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<h4 class="text-center">請按照規定修改資料</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        @* 要傳訊息的一定要打enctype="multipart/form-data" 否則不能用 *@
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MemID" />
+            <div class="mb-3">
+                <label asp-for="PersonalName" class="form-label"></label>
+                <input asp-for="PersonalName" class="form-control" placeholder="請輸入姓名"/>
+                <span asp-validation-for="PersonalName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Nickname" class="control-label"></label>
+                <input asp-for="Nickname" class="form-control" />
+                <span asp-validation-for="Nickname" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Gender" class="control-label"></label>
+                <input asp-for="Gender" class="form-control" placeholder="請輸入'男'、'女'、'其他'" />
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="BirthDate" class="control-label"></label>
+                <input asp-for="BirthDate" class="form-control" type="date" />   @* 格式改成date *@
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PostalCode" class="control-label"></label>
+                <input asp-for="PostalCode" class="form-control" />
+                <span asp-validation-for="PostalCode" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="AdminRegion_AdmID" class="control-label"></label>
+                <select asp-for="AdminRegion_AdmID" class="form-control" asp-items="ViewBag.AdminRegion_AdmID">
+                </select>
+                <span asp-validation-for="AdminRegion_AdmID" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="District_DisID" class="control-label"></label>
+                <select asp-for="District_DisID" class="form-control" asp-items="ViewBag.District_DisID"></select>
+                <span asp-validation-for="District_DisID" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="OtherAddress" class="control-label"></label>
+                <input asp-for="OtherAddress" class="form-control" />
+                <span asp-validation-for="OtherAddress" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" placeholder="請輸入帳號" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" placeholder="包含各一個大寫字母、小寫字母、符號和數字" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" placeholder="請輸入電子信箱" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Phone" class="control-label"></label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="NationalID" class="control-label"></label>
+                <input asp-for="NationalID" class="form-control" placeholder="請輸入身分證" />
+                <span asp-validation-for="NationalID" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="IDImage" class="control-label"></label>
+                <input type="file" class="form-control" name="uploadPhoto" id="uploadPhoto">
+                <div id="photoPreview" class="text-center">
+                    @if (Model.IDImage != null && Model.IDImage.Length > 0)
+                    {
+                        <img src="data:image;base64,@Convert.ToBase64String(Model.IDImage)" width="400" class="mx-auto" />
+                    }
+                </div>
+                <span asp-validation-for="IDImage" class="text-danger"></span>
+            </div>
+            <div class="mb-3" style="display: none;">
+                <label asp-for="CreationTime" class="control-label"></label>
+                <input asp-for="CreationTime" class="form-control" />
+                <span asp-validation-for="CreationTime" class="text-danger"></span>
+            </div>
+            <div class="mb-3" style="display: none;">
+                <label asp-for="DeletionTime" class="control-label"></label>
+                <input asp-for="DeletionTime" class="form-control" />
+                <span asp-validation-for="DeletionTime" class="text-danger"></span>
+            </div>
+            <div class="mb-3" style="display: none;">
+                <label asp-for="LastLogin" class="control-label"></label>
+                <input asp-for="LastLogin" class="form-control" />
+                <span asp-validation-for="LastLogin" class="text-danger"></span>
+            </div>
+            <div class="mb-3 form-check" style="display: none;">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+                </label>
+            </div>
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-center justify-content-md-between">                    
+                    <div class="d-inline-block">
+                        <input type="submit" value="儲存" class="btn btn-primary" />
+                    </div>
+                    <div class="d-inline-block">
+                        <a asp-action="Index" class="btn btn-secondary">返回</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // 監聽 AdminRegion_AdmID 下拉列表的變化
+        document.getElementById("AdminRegion_AdmID").addEventListener("change", function () {
+            var selectedAdmID = this.value;
+            // 發送 Ajax 請求以獲取對應的 District_DisID
+            $.ajax({
+                url: '/Members/GetDistrictDisID',
+                type: 'POST',
+                data: { selectedAdmID: selectedAdmID },
+                success: function (data) {
+                    // 清空 District_DisID 下拉列表中的選項
+                    $('#District_DisID').empty();
+                    // 添加新的選項
+                    data.forEach(function (district) {
+                        $('#District_DisID').append($('<option>', {
+                            value: district.value,
+                            text: district.text
+                        }));
+                    });
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            // 獲得當前值
+            var selectedValue = $('#District_DisID').val();
+
+            // 發送 Ajax 請求以獲取對應的 District_DisID
+            $.ajax({
+                url: '/Members/GetFilteredDistricts',
+                type: 'POST',
+                data: { selectedValue: selectedValue },
+                success: function (data) {
+                    // 清空 District_DisID 下拉列表中的選項
+                    $('#District_DisID').empty();
+                    // 添加新的選項
+                    $.each(data, function (index, district) {
+                        $('#District_DisID').append($('<option>', {
+                            value: district.value,
+                            text: district.text
+                        }));
+                    });
+                }
+            });
+        });
+
+        //圖片預覽
+        $('#uploadPhoto').change(function () {
+            let file = this.files[0];
+
+            let reader = new FileReader();
+
+            reader.onload = event => {
+                $('#photoPreview').html(`<img src="${event.target.result}" width="400" />`);
+            };
+            reader.readAsDataURL(file);
+        });
+
+
+
+    </script>
+
+}

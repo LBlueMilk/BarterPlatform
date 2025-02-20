@@ -1,0 +1,64 @@
+﻿@model IEnumerable<BarterPlatform.Models.Item>
+
+@{
+    ViewData["Title"] = "歡迎您";
+}
+
+
+<div class="homeindex-text-center">
+    <div class="homeindex-privacy-policy-container">
+        <p class="homeindex-text">
+            有不要想丟掉或換錢的東西嗎？<br>想找找有什麼別人不要但可能是你寶貝的玩意兒嗎？<br>
+            歡迎來到易物平台~
+        </p>
+    </div>
+</div>
+   
+
+
+
+<div class="carousel-container">
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @(i + 1)"></button>
+            }
+        </div>
+        <div class="carousel-inner">
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                var item = Model.ElementAt(i);
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <div class="carousel-item-wrapper">
+                        @if (item.IteImage != null && item.IteImage.Length > 0)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.IteImage)" class="d-block w-100" alt="Slide @(i + 1)" loading="lazy" >
+                        }
+                        else
+                        {
+                            <img src="/Images/Noimageavailable.jpg" class="d-block w-100" alt="Slide @(i + 1)">
+                        }
+                    </div>
+                    @if (!string.IsNullOrEmpty(item.ItemName) || !string.IsNullOrEmpty(item.IteDesc))
+                    {
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5 class="caption-title">@item.ItemName</h5>
+                            <p class="caption-description">@item.IteDesc</p>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+

@@ -1,0 +1,88 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: url(../Images/MicrosoftNostalicClippy4k.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    transition: opacity 0.5s ease, transform 0.5s ease; /*過渡動畫*/
+}
+
+/*背景放大+透明*/
+.clicked {
+    opacity: 0.6;
+    transform: scale(1.4) rotate(-10deg);
+}
+
+section .wave {
+    position: absolute;
+    width: 100%;
+    height: 143px;
+    bottom: 0;
+    left: 0;
+    background: url(../Images/wave.png);
+    animation: animate 10s linear infinite;
+}
+
+    section .wave::before {
+        content: "";
+        width: 100%;
+        height: 143px;
+        background: url(../Images/wave.png);
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0.4;
+        animation: animate-reverse 10s linear infinite;
+    }
+
+@keyframes animate {
+    0% {
+        background-position: 0;
+    }
+
+    100% {
+        background-position: 1360px;
+    }
+}
+
+@keyframes animate-reverse {
+    0% {
+        background-position: 1360px;
+    }
+
+    100% {
+        background-position: 0;
+    }
+}
+
+.welcome-message {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.5s ease, opacity 0.5s ease;
+}
+
+    .welcome-message a {
+        text-decoration: none;
+        color: #333;
+        font-size: 18px;
+    }
+
+.messageclicked {
+    display: block;
+    background-color: rgba(255, 255, 255, 1);
+    opacity: 1;
+}

@@ -1,0 +1,249 @@
+﻿@model BarterPlatform.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+
+    var expression = (ModelExpressionProvider as IModelExpressionProvider).CreateModelExpression<BarterPlatform.Models.LoginViewModel, string>(ViewData, m => m.Member.Username);
+}
+
+<style>
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 100px;
+    }
+
+    .login-panel {
+        width: 300px;
+        margin: auto;
+    }
+
+    .custom-container {
+        padding-top: 20px;
+    }
+
+    .custom-panel {
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .custom-col {
+        margin-bottom: 10px;
+    }
+
+    #emplogin {
+        background-color: #FFD2D2;
+    }
+
+    #memlogin {
+        background-color: #D1E9E9;
+    }
+
+    #worktitle {
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        padding-block-end: 20px;
+    }
+
+    #usename {
+        font-weight: bold;
+    }
+
+    #loginin {
+        padding-block-start: 20px;
+    }
+
+    #passpower {
+        font-weight: bold;
+        padding-block-start: 10px;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .button-container .panel-footer {
+            margin: 0.5rem;
+        }
+
+    h1 {
+        padding-block-end: 10px;
+    }
+
+    .form-group .usenamename {
+        padding-block-start: 20px;
+    }
+
+    .form-group .passpowername {
+        padding-block-start: 20px;
+    }
+
+    .ErrorMsgText{
+        font-weight:bold
+    }
+
+
+
+
+
+
+    .btn-42,
+    .btn-42 *,
+    .btn-42 :after,
+    .btn-42 :before,
+    .btn-42:after,
+    .btn-42:before {
+        border: 0 solid;
+        box-sizing: border-box;
+    }
+
+    .btn-42 {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-appearance: button;
+        background-color: #000;
+        background-image: none;
+        color: #fff;
+        cursor: pointer;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+        font-size: 100%;
+        line-height: 1.5;
+        margin: 0;
+        -webkit-mask-image: -webkit-radial-gradient(#000, #fff);
+        padding: 0;
+    }
+
+        .btn-42:disabled {
+            cursor: default;
+        }
+
+        .btn-42:-moz-focusring {
+            outline: auto;
+        }
+
+        .btn-42 svg {
+            display: block;
+            vertical-align: middle;
+        }
+
+        .btn-42 [hidden] {
+            display: none;
+        }
+
+    .btn-42 {
+        border-radius: 999px;
+        box-sizing: border-box;
+        display: block;
+        font-weight: 900;
+        -webkit-mask-image: none;
+        padding: 1rem 3rem;
+        position: relative;
+        text-transform: uppercase;
+    }
+
+        .btn-42 span {
+            mix-blend-mode: difference;
+        }
+
+        .btn-42:before {
+            --thickness: 4px;
+            border: var(--thickness) solid #fff;
+            border-radius: 999px;
+            content: "";
+            inset: calc(var(--thickness) * -1);
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            transform: scale(1.3);
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn-42:hover:before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .btn-42:hover {
+            background-color: transparent;
+        }
+
+</style>
+
+<h1> </h1>
+
+<div class="container custom-container">
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-4">
+            <div class="shadow p-4 custom-panel" id="memlogin">
+                <div class="panel panel-primary">
+                    <div class="panel-heading" id="worktitle">會員登入</div>
+                    <span class="text-danger ErrorMsgText">@ViewData["ErrorMsgMem"]</span>
+                    <div class="panel-body">
+                        <form asp-action="LoginMem" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group" id="usename">
+                                <label asp-for="Member.Username" class="usenamename">帳號</label>
+                                <input asp-for="Member.Username" class="form-control" />
+                                <span asp-validation-for="Member.Username" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" id="passpower">
+                                <label asp-for="Member.Password" class="usenamename">密碼</label>
+                                <input asp-for="Member.Password" type="password" class="form-control"/>
+                                <span asp-validation-for="Member.Password" class="text-danger"></span>
+                            </div>
+                            <div class="button-container">
+                                <div class="panel-footer" id="loginin">
+                                    @* data-bs-html="true" 開啟才能解析HTML標籤 <br>才有效*@
+                                    <button type="submit" class="btn btn-outline-info btn-sm btn-42" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="歡迎您的到來~<br>ヽ(●´∀`●)ﾉ">會員登入</button>
+                                </div>
+                                <div class="panel-footer" id="loginin">
+                                    @* data-bs-html="true" 開啟才能解析HTML標籤 <br>才有效*@
+                                    <a asp-action="Create" class="btn btn-outline-info btn-sm btn-42" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="不是會員嗎?歡迎註冊<br>(*´∀`)~♥">註冊會員</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>                   
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="shadow p-4 custom-panel" id="emplogin">
+                <div class="panel panel-primary">
+                    <div class="panel-heading" id="worktitle">員工登入</div>
+                    <span class="text-danger ErrorMsgText">@ViewData["ErrorMsgEmp"]</span>
+                    <div class="panel-body">
+                        <form asp-action="LoginEmp" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group" id="usename">
+                                <label asp-for="Employee.Username" class="usenamename">帳號</label>
+                                <input asp-for="Employee.Username" class="form-control" />
+                                <span asp-validation-for="Employee.Username" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" id="passpower">
+                                <label asp-for="Employee.Password" class="usenamename">密碼</label>
+                                <input asp-for="Employee.Password" type="password" class="form-control" />
+                                <span asp-validation-for="Employee.Password" class="text-danger"></span>
+                            </div>
+                            <div class="button-container">
+                                <div id="loginin" class="panel-footer">
+                                    @* data-bs-html="true" 開啟才能解析HTML標籤 <br>才有效*@
+                                    <button type="submit" class="btn btn-outline-info btn-sm btn-42" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="新進人員請先詢問主管人員<br>(*´ω`)人(´ω`*)">員工登入</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

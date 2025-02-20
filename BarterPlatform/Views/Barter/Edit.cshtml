@@ -1,0 +1,85 @@
+﻿@model BarterPlatform.Models.Item
+
+@{
+    ViewData["Title"] = "修改小舖";
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+<h4 class="text-center">請按照規定修改資料</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        @* 要傳訊息的一定要打enctype="multipart/form-data" 否則不能用 *@
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IteID" />
+            <div class="mb-3">
+                <label asp-for="ItemName" class="control-label"></label>
+                <input asp-for="ItemName" class="form-control" />
+                <span asp-validation-for="ItemName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="IteImage" class="control-label"></label>
+                <input type="file" class="form-control" name="uploadPhoto" id="uploadPhoto">
+                <div id="photoPreview" class="text-center">
+                    @if (Model.IteImage != null && Model.IteImage.Length > 0)
+                    {
+                        <img src="data:image;base64,@Convert.ToBase64String(Model.IteImage)" width="400" class="mx-auto" />
+                    }
+                </div>
+                <span asp-validation-for="IteImage" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="IteDesc" class="control-label"></label>
+                <textarea asp-for="IteDesc" class="form-control" style="height:360px"></textarea> @* 調整物品說明框的高度 *@
+                <span asp-validation-for="IteDesc" class="text-danger"></span>
+            </div>
+            <div class="mb-3" style="display: none;">
+                <label asp-for="UploadTime" class="control-label"></label>
+                <input asp-for="UploadTime" class="form-control" />
+                <span asp-validation-for="UploadTime" class="text-danger"></span>
+            </div>
+            <div class="mb-3 form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Bargain" /> @Html.DisplayNameFor(model => model.Bargain)
+                </label>
+            </div>
+            <div class="mb-3" style="display: none;">
+                <label asp-for="Member_MemID" class="control-label" style="display: none;"></label>
+                <select asp-for="Member_MemID" class="form-control" asp-items="ViewBag.Member_MemID"></select>
+                <span asp-validation-for="Member_MemID" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-center justify-content-md-between">
+                    <div class="d-inline-block">
+                        <input type="submit" value="儲存" class="btn btn-primary" />
+                    </div>
+                    <div class="d-inline-block">
+                        <a asp-controller="Barter" asp-action="BarterChat" asp-route-id="@Model.IteID" class="btn btn-secondary">返回小舖</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        //圖片預覽
+        $('#uploadPhoto').change(function () {
+            let file = this.files[0];
+
+            let reader = new FileReader();
+
+            reader.onload = event => {
+                $('#photoPreview').html(`<img src="${event.target.result}" width="400" />`);
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+}

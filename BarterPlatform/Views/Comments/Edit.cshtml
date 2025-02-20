@@ -1,0 +1,50 @@
+﻿@model BarterPlatform.Models.Comment
+
+@{
+    ViewData["Title"] = "留言修改";
+    Layout = "_LayoutRearEnd";
+}
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<h4 class="text-danger text-center">請確認為帳號持有者要求修改，否則有法律問題</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ComID" />
+            <div class="form-group">
+                <label asp-for="ComContent" class="control-label"></label>
+                <input asp-for="ComContent" class="form-control" />
+                <span asp-validation-for="ComContent" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display: none;">
+                <label asp-for="ComTime" class="control-label"></label>
+                <input asp-for="ComTime" class="form-control" />
+                <span asp-validation-for="ComTime" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display: none;">
+                <label asp-for="Member_MemID" class="control-label"></label>
+                <select asp-for="Member_MemID" class="form-control" asp-items="ViewBag.Member_MemID"></select>
+                <span asp-validation-for="Member_MemID" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display: none;">
+                <label asp-for="Item_IteID" class="control-label"></label>
+                <input asp-for="Item_IteID" class="form-control" />
+                <span asp-validation-for="Item_IteID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

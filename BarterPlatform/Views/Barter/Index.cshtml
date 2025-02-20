@@ -1,0 +1,110 @@
+﻿@model IEnumerable<BarterPlatform.Models.Item>
+
+@{
+    ViewData["Title"] = "易物市場";
+
+    // 設定每頁顯示的資料數量
+    int pageSize = 12;
+    // 獲取當前頁碼，預設為 1
+    int currentPage = (Context.Request.Query["page"].Count > 0) ? int.Parse(Context.Request.Query["page"]) : 1;
+    // 反轉整體資料後進行分頁
+    var reversedModel = Model.OrderByDescending(item => item.UploadTime);
+    var itemsToShow = reversedModel.Skip((currentPage - 1) * pageSize)
+                                   .Take(pageSize)
+                                   .ToList(); // 使用 ToList() 確保數據在記憶體中
+
+    // 計算總頁數
+    int totalItems = Model.Count();
+    int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+}
+
+
+@if (Context.Request.Cookies["LoggedInMem"] != null)
+{
+    <p>
+        <a asp-action="Create">我也要上架</a>
+    </p>
+}
+else
+{
+    <p>
+        <a asp-controller="Login" asp-action="Login">歡迎註冊即可上架</a>
+    </p>
+}
+
+
+<div class="card-container row row-cols-1 row-cols-md-2 row-cols-lg-4 g-2">    
+    @foreach (var item in itemsToShow)
+    {
+        //依照Cookies["LoggedInMem"]的MemID去判斷登入者身分
+        bool loggedInAndMatchingMemId = Context.Request.Cookies["LoggedInMem"] != null && Context.Request.Cookies["LoggedInMem"] == item.Member_Mem.MemID;
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <small class="text-muted">@Html.DisplayFor(modelItem => item.Member_Mem.PersonalName)</small>
+                    @if (loggedInAndMatchingMemId)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.IteID" class="btn btn-outline-success btn-sm">編輯</a>
+                    }                    
+                </div>
+                <div style="display: flex; justify-content: center; align-items: center; height:18rem; overflow: hidden;">
+                    <a asp-action="BarterChat" asp-route-id="@item.IteID" style="text-decoration: none; color: inherit;">
+                        @if (item.IteImage != null && item.IteImage.Length > 0)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.IteImage)" alt="ID Image" class="img-fluid rounded-start card-img-top" />
+                        }
+                        else
+                        {
+                            <img src="@Url.Content("~/Images/Noimageavailable.jpg")" alt="No image available" class="img-fluid rounded-start" />
+                        }
+                    </a>
+                </div>
+                <div class="card-body">
+                    <a asp-action="BarterChat" asp-route-id="@item.IteID" style="text-decoration: none; color: inherit;">
+                        <h5 class="card-title">@Html.DisplayFor(modelItem => item.ItemName)</h5>
+                    </a>
+                    @* 限制文字長度 *@
+                    <p class="card-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">@Html.DisplayFor(modelItem => item.IteDesc)</p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted text-end" style="display: block">@Html.DisplayFor(modelItem => item.UploadTime)</small>
+                </div>
+            </div>
+        </div>
+    }
+
+
+</div>
+
+
+
+<!-- 分頁控制 -->
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        @if (currentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(currentPage - 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        }
+
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(i == currentPage ? "active" : "")">
+                <a class="page-link" href="?page=@i">@i</a>
+            </li>
+        }
+
+        @if (currentPage < totalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(currentPage + 1)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        }
+    </ul>
+</nav>

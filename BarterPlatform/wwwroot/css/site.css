@@ -1,0 +1,115 @@
+﻿html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+
+/* 自訂錯誤消息樣式 */
+.field-validation-error {
+    color: #dc3545; /* 錯誤消息顏色 */
+    font-size: 0.875em; /* 錯誤消息字體大小 */
+    margin-top: 5px; /* 錯誤消息與輸入框之間的距離 */
+    display: block; /* 顯示為區塊 */
+    border: 1px solid #dc3545; /* 錯誤邊框顏色 */
+    padding: 5px; /* 錯誤消息內邊距 */
+    border-radius: 5px; /* 錯誤消息邊框圓角 */
+    background-color: #f8d7da; /* 錯誤消息背景顏色 */
+}
+/* 自訂輸入框錯誤樣式 */
+input.error, textarea.error {
+    border-color: #dc3545; /* 錯誤邊框顏色 */
+    background-color: #f8d7da; /* 錯誤背景顏色 */
+}
+/* 自訂錯誤消息顯示方式 */
+.field-validation-error::before {
+    content: "⚠️"; /* 顯示警告符號 */
+    color: #dc3545; /* 圖示顏色 */
+    margin-right: 5px; /* 圖示與消息之間的距離 */
+    font-size: 1.2em; /* 圖示字體大小 */
+}
+
+
+.carousel-container {
+    max-width: 70%; /* 確保容器最大寬度為100% */
+    margin: auto; /* 置中 */
+    position: relative; /* 確保子元素的絕對定位基於容器 */
+}
+
+.carousel-inner {
+    position: relative; /* 確保內部元素的絕對定位基於這個容器 */
+    overflow: hidden; /* 隱藏超出容器的內容 */
+}
+
+.carousel-item-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-height: 500px; /* 根據需要調整最大高度 */
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 確保圖片覆蓋整個容器 */
+}
+
+
+.caption-title, .caption-description {
+    color: #000; /* 黑色文字 */
+    text-shadow: 1px 1px 2px #fff; /* 白色外框 */
+    font-weight:bolder;
+}
+
+.caption-title {
+    font-size: 1.5rem; /* 調整標題字體大小 */
+    margin-bottom: 0.5rem; /* 調整標題與描述的間距 */
+}
+
+.caption-description {
+    font-size: 1rem; /* 調整描述字體大小 */
+    white-space: nowrap; /* 禁止換行 */
+    overflow: hidden; /* 隱藏超出部分 */
+    text-overflow: ellipsis; /* 顯示省略號 */
+    max-width: 100%; /* 限制最大寬度為容器的 100% */
+    display: block; /* 確保是塊級元素，適應容器寬度 */
+}
+
+
+.homeindex-text-center {
+    text-align: center;
+}
+
+.homeindex-privacy-policy-container {
+    display: inline-block; /* 使容器根據內容寬度調整 */
+    margin-top: 20px; /* 上方距離 */
+    margin-bottom: 20px; /* 下方距離 */
+    padding: 20px 20px 10px 20px; /* 增加內邊距以擴展容器 */
+    background-color: #f9f9f9; /* 背景顏色 */
+    border-radius: 5px; /* 文字背景圓角 */
+}
+
+.homeindex-text {
+    font-size: 2em; /* 調整字體大小 */
+    color: #333; /* 字體顏色 */
+    line-height: 1.6; /* 行高 */
+    font-family: 'Arial', sans-serif; /* 字體 */
+    font-weight: bold; /* 字體粗細 */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* 文字陰影效果 */
+    padding: 1px; /* 文字內邊距 */
+    background-color: #f9f9f9; /* 背景顏色 */
+    border-radius: 5px; /* 文字背景圓角 */
+}

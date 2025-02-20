@@ -1,0 +1,53 @@
+﻿@model BarterPlatform.Models.Comment
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = null;
+}
+
+@* <h4>Comment</h4>
+<hr /> *@
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create" id="ReForm">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ComID" class="control-label" style="display: none;></label>
+                <input asp-for="ComID" class="form-control" />
+                <span asp-validation-for="ComID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <textarea asp-for="ComContent" class="form-control" rows="7" maxlength="300" placeholder="留言內容請勿超過300字，並且
+(1) 尊重他人意見
+(2) 注意用字遣詞與口氣，避免引起爭吵
+(3) 適度引用文章，避免引用過長文章，造成閱讀困擾"></textarea>
+                <span asp-validation-for="ComContent" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="ComTime" class="control-label" style="display: none;></label>
+                <input asp-for="ComTime" class="form-control" />
+                <span asp-validation-for="ComTime" class="text-danger"></span>
+            </div> *@
+            @* <div class="form-group">
+                <label asp-for="Member_MemID" class="control-label"></label>
+                <select asp-for="Member_MemID" class ="form-control" asp-items="ViewBag.Member_MemID"></select>
+            </div> *@
+            @* <div class="form-group">
+                <label asp-for="Item_ID.ItemName" class="control-label"></label>
+                <select asp-for="Item_ID.ItemName" class ="form-control" asp-items="ViewBag.Item_IteID"></select>
+            </div> *@
+            @* <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div> *@
+        </form>
+    </div>
+</div>
+@* 
+<div>
+    <a asp-action="Index">Back to List</a>
+</div> *@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
