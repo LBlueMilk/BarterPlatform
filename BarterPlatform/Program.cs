@@ -5,8 +5,19 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//註冊連線，名稱來自appsettings.json設定
-builder.Services.AddDbContext<BarterPlatformContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("BarterPlatformConnection")));
+//註冊SQL Server連線，名稱來自appsettings.json設定
+//builder.Services.AddDbContext<BarterPlatformContext>(option => 
+//    option.UseSqlServer(builder.Configuration.GetConnectionString("BarterPlatformConnection")));
+
+//註冊Npgsql PostgresSQL連線，名稱來自appsettings.json設定
+builder.Services.AddDbContext<BarterPlatformContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("BarterPlatformConnection")));
+
+//註冊Npgsql PostgresSQL連線，名稱來自appsettings.json設定，用於Azure環境變數版本
+//builder.Services.AddDbContext<BarterPlatformContext>(options =>
+//    options.UseNpgsql(builder.Configuration.GetConnectionString("POSTGRESQL_CONNECTION_STRING")));
+
+
 
 //註冊Session
 builder.Services.AddDistributedMemoryCache();
