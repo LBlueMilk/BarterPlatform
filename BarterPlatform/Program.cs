@@ -5,18 +5,18 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+//判斷是否為Azure環境變數，否則使用本地連接字串
+var connectionString = Environment.GetEnvironmentVariable("BarterPlatformConnection")
+                       ?? builder.Configuration.GetConnectionString("BarterPlatformConnection");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("未設定 'BarterPlatformConnection' 連接字串。");
+}
 //註冊SQL Server連線，名稱來自appsettings.json設定
-//builder.Services.AddDbContext<BarterPlatformContext>(option => 
-//    option.UseSqlServer(builder.Configuration.GetConnectionString("BarterPlatformConnection")));
-
-//註冊Npgsql PostgresSQL連線，名稱來自appsettings.json設定
 builder.Services.AddDbContext<BarterPlatformContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("BarterPlatformConnection")));
-
-//註冊Npgsql PostgresSQL連線，名稱來自appsettings.json設定，用於Azure環境變數版本
-//builder.Services.AddDbContext<BarterPlatformContext>(options =>
-//    options.UseNpgsql(builder.Configuration.GetConnectionString("POSTGRESQL_CONNECTION_STRING")));
-
+    options.UseSqlServer(connectionString));
 
 
 //註冊Session
