@@ -1,5 +1,7 @@
 # 112-2 行動商務系統設計與開發 - 易物平台
 
+### https://barterplatform.azurewebsites.net/
+
 ## 問題處理指南
 
 ### 1. 資料表匯出遇到逾時問題
