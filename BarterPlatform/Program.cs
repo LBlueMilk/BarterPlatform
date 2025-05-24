@@ -1,4 +1,5 @@
 using BarterPlatform.Models;
+using BarterPlatform.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,10 @@ builder.Services.AddSwaggerGen();
 
 //µù¥USmtpSettings°t¸m¡A±Nsecrets.json¼g¦bAzure
 builder.Services.Configure<BPEmail.SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+
+//
+builder.Services.AddScoped<IDatabaseHealthService, DatabaseHealthService>();
+
 
 
 /////////////////////////////////////////////////////////////////////
