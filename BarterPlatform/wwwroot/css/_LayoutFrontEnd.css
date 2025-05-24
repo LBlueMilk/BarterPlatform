@@ -43,7 +43,7 @@ footer {
 }
 
     .navbar a.nav-link {
-        color: white !important;
+        color: #000 !important;
         font-weight: bold;
         transition: color 0.3s;
     }

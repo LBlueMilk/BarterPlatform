@@ -45,10 +45,13 @@ builder.Services.Configure<BPEmail.SmtpSettings>(builder.Configuration.GetSectio
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 錯誤發生時的處理
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Home/ErrorProduction");
+
+    // 捕捉 HTTP 狀態碼錯誤 (如 404、403 等)，導向同一錯誤頁面
+    app.UseStatusCodePagesWithReExecute("/Home/ErrorProduction");
 }
 
 //開發環境才能用SWAGGER

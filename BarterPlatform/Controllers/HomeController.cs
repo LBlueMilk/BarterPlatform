@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Net.Mail;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BarterPlatform.Controllers
 {
@@ -106,5 +107,13 @@ namespace BarterPlatform.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        // 用於正式環境錯誤頁面（不顯示 RequestId）
+        [AllowAnonymous]
+        public IActionResult ErrorProduction()
+        {
+            return View(); // 對應 Views/Shared/ErrorProduction.cshtml
+        }
+
     }
 }

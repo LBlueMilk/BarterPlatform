@@ -62,10 +62,10 @@
                         </li>     *@                                           
                     </ul>
 
-                    <!-- 夜間模式按鈕 -->
-                    <button id="darkModeToggle" class="btn btn-outline-secondary ms-3">
+                    <!-- 夜間模式按鈕 暫時不用-->
+                    @* <button id="darkModeToggle" class="btn btn-outline-secondary ms-3">
                         🌙 夜間模式
-                    </button>
+                    </button> *@
 
                     <ul class="navbar-nav">
                         <li class="nav-item my-auto mx-3">
@@ -90,11 +90,11 @@
                                 @* 判斷登入狀態 *@
                                 @if (Context.Request.Cookies["LoggedInMem"] != null)
                                 {
-                                    <a class="btn btn-outline-light m-sm-auto" asp-area="" asp-controller="Login" asp-action="Logout">登出</a>
+                                    <a class="btn btn-outline-dark  m-sm-auto" asp-area="" asp-controller="Login" asp-action="Logout">登出</a>
                                 }
                                 else
                                 {
-                                    <a class="btn btn-outline-light m-sm-auto" asp-area="" asp-controller="Login" asp-action="Login">登入/註冊</a>
+                                        <a class="btn btn-outline-dark  m-sm-auto" asp-area="" asp-controller="Login" asp-action="Login">登入/註冊</a>
                                 }
                             </div>
                         </li>
