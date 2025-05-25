@@ -43,7 +43,7 @@
             <div class="spinner-border spinner-border-sm text-warning me-2" role="status">
                 <span class="visually-hidden">載入中...</span>
             </div>
-            <strong>系統正在喚醒資料庫，請稍候幾秒...</strong>
+            <strong>系統正在喚醒資料庫，請稍候幾秒後再嘗試...</strong>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button>
     </div>
@@ -90,24 +90,24 @@
                         @* 判斷登入狀態 *@
                         @if (Context.Request.Cookies["LoggedInMem"] != null)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="PersonalPage" asp-action="Index">我的小屋</a>
-                            </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="PersonalPage" asp-action="Index">我的小屋</a>
+                                    </li>
                         }
                         else
                         {
-                            <li></li>
+                                    <li></li>
                         }
                         <li>
                             <div class="mx-2">
                                 @* 判斷登入狀態 *@
                                 @if (Context.Request.Cookies["LoggedInMem"] != null)
                                 {
-                                    <a class="btn btn-outline-dark  m-sm-auto" asp-area="" asp-controller="Login" asp-action="Logout">登出</a>
+                                            <a class="btn btn-outline-dark  m-sm-auto" asp-area="" asp-controller="Login" asp-action="Logout">登出</a>
                                 }
                                 else
                                 {
-                                    <a class="btn btn-outline-dark  m-sm-auto" asp-area="" asp-controller="Login" asp-action="Login">登入/註冊</a>
+                                            <a class="btn btn-outline-dark  m-sm-auto" asp-area="" asp-controller="Login" asp-action="Login">登入/註冊</a>
                                 }
                             </div>
                         </li>
@@ -138,13 +138,9 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script>
-        // 全域變數，用於記錄原始請求的URL
-        let originalRequestUrl = null;
 
         // 初始化 Bootstrap Tooltips
         document.addEventListener("DOMContentLoaded", function () {
-            // 記錄當前頁面的完整URL（包含查詢參數）
-            originalRequestUrl = window.location.href;
             // 初始化 Bootstrap Tooltips
             initializeTooltips();
             // 初始化夜間模式
@@ -208,28 +204,65 @@
         // 資料庫喚醒功能
         function initializeDatabaseCheck() {
             const dbMessage = document.getElementById('db-waking-message');
-
             if (!dbMessage) {
                 console.warn("未找到資料庫提示訊息");
                 return;
             }
 
-            fetch('/api/ping')
-                .then(response => {
+            const url = new URL(window.location.href);
+            const hasWakeParam = url.searchParams.get("wake") === "1";
+
+            const maxRetries = 10;
+            const retryIntervalMs = 3000;
+            let attempt = 0;
+
+            async function checkDatabaseReady() {
+                try {
+                    const response = await fetch(`/api/ping?t=${Date.now()}`);
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: 資料庫尚未準備好`);
                     }
-                    console.log('資料庫已成功連線');
-                })
-                .catch(error => {
-                    console.warn('資料庫連線中，預計 3 秒後重試...', error.message);
+
+                    console.log("資料庫已連線");
+
+                     if (hasWakeParam) {
+                        // 從 wake 狀態進來的話，成功後 reload 回原始狀態（移除 wake 參數）
+                        url.searchParams.delete("wake");
+                        window.location.href = url.toString();
+                    }
+                    // 否則第一次就成功，什麼都不做（不 reload）
+                } catch (error) {
+                    attempt++;
+                    console.warn(`第 ${attempt} 次檢查失敗：${error.message}`);
                     dbMessage.style.display = 'block';
 
-                    setTimeout(() => {
-                        console.log('正在重新載入頁面...');
-                        location.reload();
-                    }, 3000);
-                });
+                    if (attempt < maxRetries) {
+                        setTimeout(checkDatabaseReady, retryIntervalMs);
+                    } else {
+                        dbMessage.innerText = '資料庫無法連線，請稍後再試';
+                        console.error("多次重試仍無法連線");
+                    }
+                }
+            }
+
+            // 只有當 wake=1 時才觸發檢查（以避免無限輪詢）
+            if (!hasWakeParam) {
+                // 初次檢查，資料庫失敗的話進入輪詢 + 加參數
+                fetch(`/api/ping?t=${Date.now()}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        console.log("第一次檢查資料庫正常，不重整");
+                    })
+                    .catch(err => {
+                        console.warn("資料庫未準備好，啟動輪詢...");
+                        // 加 wake 參數，進入正式輪詢流程
+                        url.searchParams.set("wake", "1");
+                        window.location.href = url.toString(); // reload with wake=1
+                    });
+            } else {
+                // 若 wake=1，表示資料庫剛剛喚醒過，現在正式進入輪詢直到成功
+                checkDatabaseReady();
+            }
         }
 
     </script>
