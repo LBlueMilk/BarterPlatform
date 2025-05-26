@@ -224,11 +224,14 @@
                     }
 
                     console.log("資料庫已連線");
+                    dbMessage.style.display = 'none';
 
-                     if (hasWakeParam) {
-                        // 從 wake 狀態進來的話，成功後 reload 回原始狀態（移除 wake 參數）
-                        url.searchParams.delete("wake");
-                        window.location.href = url.toString();
+                    if (hasWakeParam) {
+                        // 延遲 300ms 進行導向，讓畫面穩定後再切換
+                        setTimeout(() => {
+                            url.searchParams.delete("wake");
+                            window.location.href = url.toString();
+                        }, 300);
                     }
                     // 否則第一次就成功，什麼都不做（不 reload）
                 } catch (error) {
