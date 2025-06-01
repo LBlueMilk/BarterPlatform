@@ -1,444 +1,101 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>ArcGIS API 練習 - 台灣地圖</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ArcGIS API 練習頁面</title>
 
-    <!-- ArcGIS API for JavaScript CSS -->
-    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
+    <!-- ArcGIS Maps SDK for JavaScript -->
+    <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css">
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Microsoft JhengHei', Arial, sans-serif;
-            background: #f5f5f5;
-        }
+    <link rel="stylesheet" href="css/ArcGISAPI.css">
 
-        .header {
-            background: linear-gradient(135deg, #2e86de, #54a0ff);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
 
-        .container {
-            display: flex;
-            height: calc(100vh - 80px);
-        }
-
-        .sidebar {
-            width: 300px;
-            background: white;
-            padding: 20px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            overflow-y: auto;
-        }
-
-        .map-container {
-            flex: 1;
-            position: relative;
-        }
-
-        #viewDiv {
-            height: 100%;
-            width: 100%;
-        }
-
-        .control-group {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #2e86de;
-        }
-
-            .control-group h3 {
-                margin: 0 0 10px 0;
-                color: #2e86de;
-                font-size: 14px;
-            }
-
-        button {
-            background: #2e86de;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 2px;
-            font-size: 12px;
-            transition: background 0.3s;
-        }
-
-            button:hover {
-                background: #1e6bb8;
-            }
-
-            button:active {
-                transform: translateY(1px);
-            }
-
-        select, input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin: 5px 0;
-            font-size: 12px;
-        }
-
-        .info-panel {
-            background: rgba(255,255,255,0.95);
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-            font-size: 12px;
-            border-left: 3px solid #54a0ff;
-        }
-
-        .status {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            z-index: 100;
-        }
-    </style>
 </head>
 <body>
     <div class="header">
-        <h1>🗺️ ArcGIS API for JavaScript 練習平台</h1>
-        <p>學習 GIS API 開發 - 台灣地圖互動範例</p>
+        <h1>🗺️ ArcGIS API 練習頁面</h1>
+        <p>學習地圖操作、圖層控制和空間查詢功能</p>
     </div>
 
     <div class="container">
         <div class="sidebar">
-            <div class="control-group">
-                <h3>📍 地圖控制</h3>
-                <button onclick="goToTaipei()">前往台北</button>
-                <button onclick="goToKaohsiung()">前往高雄</button>
-                <button onclick="goToTainan()">前往台南</button>
-                <button onclick="goToTaichung()">前往台中</button>
-            </div>
-
-            <div class="control-group">
-                <h3>🎨 底圖切換</h3>
-                <select id="basemapSelect" onchange="changeBasemap()">
+            <div class="control-section">
+                <h3>🗺️ 底圖選擇</h3>
+                <select id="basemapSelect">
                     <option value="streets-vector">街道地圖</option>
                     <option value="satellite">衛星影像</option>
                     <option value="hybrid">混合地圖</option>
-                    <option value="terrain">地形圖</option>
+                    <option value="topo-vector">地形圖</option>
                     <option value="gray-vector">灰階地圖</option>
-                    <option value="dark-gray-vector">深色地圖</option>
+                    <option value="dark-gray-vector">暗色地圖</option>
+                    <option value="osm">開放街道地圖</option>
                 </select>
             </div>
 
-            <div class="control-group">
-                <h3>📌 標記功能</h3>
-                <input type="text" id="markerTitle" placeholder="標記標題" />
-                <button onclick="enableMarkerMode()">點擊地圖添加標記</button>
-                <button onclick="clearMarkers()">清除所有標記</button>
+            <div class="control-section">
+                <h3>📍 地點導航</h3>
+                <button onclick="goToLocation('taipei')">台北市</button>
+                <button onclick="goToLocation('kaohsiung')">高雄市</button>
+                <button onclick="goToLocation('taichung')">台中市</button>
+                <button onclick="goToLocation('taiwan')">台灣全島</button>
             </div>
 
-            <div class="control-group">
-                <h3>📏 測量工具</h3>
-                <button onclick="enableDistanceMeasure()">測量距離</button>
-                <button onclick="enableAreaMeasure()">測量面積</button>
-                <button onclick="clearMeasurements()">清除測量</button>
+            <div class="control-section">
+                <h3>🎯 互動工具</h3>
+                <button id="measureBtn" onclick="toggleMeasure()">測距工具</button>
+                <button id="drawBtn" onclick="toggleDraw()">繪圖工具</button>
+                <button onclick="clearGraphics()">清除圖形</button>
             </div>
 
-            <div class="control-group">
-                <h3>🔍 搜尋功能</h3>
-                <input type="text" id="searchInput" placeholder="搜尋地點..." />
-                <button onclick="searchLocation()">搜尋</button>
+            <div class="control-section">
+                <h3>🌐 座標資訊</h3>
+                <div class="coords" id="coordsDiv">
+                    移動滑鼠查看座標<br>
+                    經度: --<br>
+                    緯度: --
+                </div>
             </div>
 
             <div class="info-panel">
-                <strong>💡 操作提示：</strong><br>
-                • 滑鼠滾輪：縮放地圖<br>
-                • 拖曳：移動地圖<br>
-                • 雙擊：放大地圖<br>
-                • 右鍵：顯示座標資訊
+                <h3>💡 操作提示</h3>
+                <ul style="margin: 10px 0; padding-left: 20px; font-size: 14px;">
+                    <li>滾輪縮放地圖</li>
+                    <li>拖拽移動地圖</li>
+                    <li>點擊測距工具後在地圖上點擊測量</li>
+                    <li>使用繪圖工具在地圖上畫圖</li>
+                    <li>移動滑鼠查看即時座標</li>
+                    <li>建立點後可點選並拖曳或刪除</li>
+                </ul>
             </div>
 
-            <div id="coordinateInfo" class="info-panel">
-                <strong>📍 座標資訊：</strong><br>
-                <span id="coordinates">移動滑鼠查看座標</span>
+            <div class="feature-info" id="featureInfo" style="display: none;">
+                <h4>點擊資訊</h4>
+                <p style="font-size: 12px; color: #666;">提示：點擊「繪圖工具」後，可點選地圖建立點，並可拖曳或刪除。</p>
+                <div id="featureDetails"></div>
             </div>
         </div>
 
         <div class="map-container">
-            <div class="status" id="status">地圖載入中...</div>
             <div id="viewDiv"></div>
         </div>
     </div>
 
-    <!-- ArcGIS API for JavaScript -->
-    <script src="https://js.arcgis.com/4.29/"></script>
+
     <script>
-        let map, view, graphicsLayer, measurementWidgets = {};
-        let markerMode = false;
-        let markers = [];
-
-        // 載入模組
-        require([
-            "esri/Map",
-            "esri/views/MapView",
-            "esri/layers/GraphicsLayer",
-            "esri/Graphic",
-            "esri/geometry/Point",
-            "esri/symbols/SimpleMarkerSymbol",
-            "esri/symbols/TextSymbol",
-            "esri/PopupTemplate",
-            "esri/widgets/Search",
-            "esri/widgets/Locate",
-            "esri/widgets/ScaleBar",
-            "esri/widgets/Compass",
-            "esri/widgets/BasemapGallery",
-            "esri/widgets/Measurement",
-            "esri/geometry/geometryEngine",
-            "esri/geometry/support/webMercatorUtils"
-        ], function (
-            Map, MapView, GraphicsLayer, Graphic, Point, SimpleMarkerSymbol,
-            TextSymbol, PopupTemplate, Search, Locate, ScaleBar, Compass,
-            BasemapGallery, Measurement, geometryEngine, webMercatorUtils
-        ) {
-
-            // 創建圖層
-            graphicsLayer = new GraphicsLayer();
-
-            // 創建地圖
-            map = new Map({
-                basemap: "streets-vector",
-                layers: [graphicsLayer]
-            });
-
-            // 創建地圖視圖 (台灣中心點)
-            view = new MapView({
-                container: "viewDiv",
-                map: map,
-                center: [120.9605, 23.8162], // 台灣中心
-                zoom: 7
-            });
-
-            // 添加小工具
-            const searchWidget = new Search({
-                view: view,
-                container: document.createElement("div")
-            });
-
-            const locateWidget = new Locate({
-                view: view
-            });
-
-            const scaleBar = new ScaleBar({
-                view: view,
-                unit: "metric"
-            });
-
-            const compass = new Compass({
-                view: view
-            });
-
-            // 添加小工具到地圖
-            view.ui.add(locateWidget, "top-left");
-            view.ui.add(scaleBar, "bottom-left");
-            view.ui.add(compass, "top-left");
-
-            // 滑鼠移動顯示座標
-            view.on("pointer-move", function (event) {
-                const point = view.toMap({
-                    x: event.x,
-                    y: event.y
-                });
-
-                if (point) {
-                    const coords = webMercatorUtils.webMercatorToGeographic(point);
-                    document.getElementById("coordinates").innerHTML =
-                        `經度: ${coords.x.toFixed(6)}<br>緯度: ${coords.y.toFixed(6)}`;
-                }
-            });
-
-            // 右鍵點擊顯示座標
-            view.on("click", ["Control"], function (event) {
-                event.stopPropagation();
-                const point = view.toMap(event);
-                const coords = webMercatorUtils.webMercatorToGeographic(point);
-
-                alert(`座標資訊:\n經度: ${coords.x.toFixed(6)}\n緯度: ${coords.y.toFixed(6)}`);
-            });
-
-            // 點擊添加標記
-            view.on("click", function (event) {
-                if (markerMode) {
-                    addMarker(event.mapPoint);
-                    markerMode = false;
-                    document.getElementById("status").textContent = "標記已添加";
-                }
-            });
-
-            // 地圖載入完成
-            view.when(function () {
-                document.getElementById("status").textContent = "地圖載入完成";
-                console.log("ArcGIS Map loaded successfully!");
-            });
-
-            // 全域函數
-            window.goToTaipei = function () {
-                view.goTo({
-                    center: [121.5654, 25.0330],
-                    zoom: 11
-                });
-                document.getElementById("status").textContent = "前往台北";
-            };
-
-            window.goToKaohsiung = function () {
-                view.goTo({
-                    center: [120.3014, 22.6273],
-                    zoom: 11
-                });
-                document.getElementById("status").textContent = "前往高雄";
-            };
-
-            window.goToTainan = function () {
-                view.goTo({
-                    center: [120.2019, 22.9999],
-                    zoom: 11
-                });
-                document.getElementById("status").textContent = "前往台南";
-            };
-
-            window.goToTaichung = function () {
-                view.goTo({
-                    center: [120.6839, 24.1477],
-                    zoom: 11
-                });
-                document.getElementById("status").textContent = "前往台中";
-            };
-
-            window.changeBasemap = function () {
-                const select = document.getElementById("basemapSelect");
-                map.basemap = select.value;
-                document.getElementById("status").textContent = "底圖已更換";
-            };
-
-            window.enableMarkerMode = function () {
-                markerMode = true;
-                document.getElementById("status").textContent = "請點擊地圖添加標記";
-            };
-
-            window.addMarker = function (point) {
-                const title = document.getElementById("markerTitle").value || "新標記";
-
-                const markerSymbol = new SimpleMarkerSymbol({
-                    color: [255, 0, 0],
-                    size: "12px",
-                    outline: {
-                        color: [255, 255, 255],
-                        width: 2
-                    }
-                });
-
-                const textSymbol = new TextSymbol({
-                    text: title,
-                    color: "black",
-                    haloColor: "white",
-                    haloSize: "2px",
-                    font: {
-                        size: "12px",
-                        family: "Microsoft JhengHei"
-                    },
-                    yoffset: 15
-                });
-
-                const markerGraphic = new Graphic({
-                    geometry: point,
-                    symbol: markerSymbol,
-                    popupTemplate: new PopupTemplate({
-                        title: title,
-                        content: `座標: ${point.longitude.toFixed(6)}, ${point.latitude.toFixed(6)}`
-                    })
-                });
-
-                const textGraphic = new Graphic({
-                    geometry: point,
-                    symbol: textSymbol
-                });
-
-                graphicsLayer.addMany([markerGraphic, textGraphic]);
-                markers.push(markerGraphic, textGraphic);
-
-                document.getElementById("markerTitle").value = "";
-            };
-
-            window.clearMarkers = function () {
-                markers.forEach(marker => graphicsLayer.remove(marker));
-                markers = [];
-                document.getElementById("status").textContent = "標記已清除";
-            };
-
-            window.enableDistanceMeasure = function () {
-                clearMeasurements();
-                measurementWidgets.distance = new Measurement({
-                    view: view,
-                    activeTool: "distance"
-                });
-                view.ui.add(measurementWidgets.distance, "top-right");
-                document.getElementById("status").textContent = "距離測量已啟用";
-            };
-
-            window.enableAreaMeasure = function () {
-                clearMeasurements();
-                measurementWidgets.area = new Measurement({
-                    view: view,
-                    activeTool: "area"
-                });
-                view.ui.add(measurementWidgets.area, "top-right");
-                document.getElementById("status").textContent = "面積測量已啟用";
-            };
-
-            window.clearMeasurements = function () {
-                Object.values(measurementWidgets).forEach(widget => {
-                    if (widget) {
-                        view.ui.remove(widget);
-                        widget.destroy();
-                    }
-                });
-                measurementWidgets = {};
-                document.getElementById("status").textContent = "測量工具已清除";
-            };
-
-            window.searchLocation = function () {
-                const searchTerm = document.getElementById("searchInput").value;
-                if (searchTerm.trim() === "") {
-                    alert("請輸入搜尋關鍵字");
-                    return;
-                }
-
-                searchWidget.search(searchTerm).then(function (response) {
-                    if (response.results.length > 0) {
-                        const result = response.results[0].results[0];
-                        view.goTo(result.feature.geometry);
-                        document.getElementById("status").textContent = `找到: ${result.name}`;
-                    } else {
-                        document.getElementById("status").textContent = "未找到搜尋結果";
-                    }
-                });
-            };
-
-            // Enter 鍵搜尋
-            document.getElementById("searchInput").addEventListener("keypress", function (event) {
-                if (event.key === "Enter") {
-                    searchLocation();
-                }
-            });
+        window.dojoConfig = {
+            paths: {
+                "js": "/js" // 指定 js 對應本地 /js 資料夾，而不是從 CDN 抓
+            }
+        };
+    </script>
+    <!-- ArcGIS Maps SDK -->
+    <script src="https://js.arcgis.com/4.32/"></script>
+    <!-- 載入本地 AMD 模組 -->
+    <script>
+        // 確保 DOM 載入完成後再執行 require()
+        window.addEventListener("DOMContentLoaded", function () {
+            require(["js/ArcGISAPI"]);
         });
     </script>
 </body>
